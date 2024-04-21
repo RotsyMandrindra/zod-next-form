@@ -1,6 +1,6 @@
+"use client"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -8,32 +8,25 @@ const formSchema = z.object({
     email: z.string()
         .min(1, { message: "This is too short for an email" })
         .email("This is not a valid email"),
-    number: z.number()
-        .min(1, { message: "This is too short for a phone number" }),
+    number: z.string()
+        .min(8, { message: "This is too short for a phone number" }),
     message: z.string(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 export default function Contact() {
-    const router = useRouter();
     const {
         handleSubmit,
         register,
-        formState: { errors, isSubmitting, isDirty, isValid },
+        formState: { errors },
     } = useForm<FormData>({
         resolver: zodResolver(formSchema),
     });
 
-    const onSubmit = async (data: FormData) => {
+    const onSubmit = (data: FormData) => {
         console.log(data);
-        await new Promise<void>((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 2000);
-        });
-        router.push("/contact");
-    };
+    };    
 
     return (
         <div>
@@ -61,7 +54,7 @@ export default function Contact() {
                     />
                     {errors.email && <p>{errors.email.message}</p>}
                 </div>
-                <div>
+                <div >
                     <label htmlFor="number">Phone number :</label>
                     <input
                         {...register("number", { required: true })}
@@ -81,9 +74,9 @@ export default function Contact() {
                         placeholder="Enter your message"
                         autoComplete="off"
                     />
-                    {errors.message && <p>{errors.message.message}</p>}
+                    {errors.message && <p className="form-error">{errors.message.message}</p>}
                 </div>
-                <button type="submit" disabled = {!isDirty || !isValid || !isSubmitting}>
+                <button type="submit" className="submit-button">
                     Submit
                 </button>
             </form>
